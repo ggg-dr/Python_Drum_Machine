@@ -215,8 +215,7 @@ class DrumMachineGUI:
             button = tk.Button(
                 self.pattern_frame,
                 text=str(step + 1),
-                command=lambda step=step: self.drum_machine.toggle_step("kick", step)
-            )
+                command=lambda step=step: self.toggle_kick_step(step))
 
             # 作成したボタンをリストに追加する
             self.kick_buttons.append(button)
@@ -235,8 +234,7 @@ class DrumMachineGUI:
             button = tk.Button(
                 self.pattern_frame,
                 text=str(step + 1),
-                command=lambda step=step: self.drum_machine.toggle_step("snare", step)
-            )
+                command=lambda step=step: self.toggle_snare_step(step))
 
             # 作成したボタンをリストに追加する
             self.snare_buttons.append(button)
@@ -255,8 +253,7 @@ class DrumMachineGUI:
             button = tk.Button(
                 self.pattern_frame,
                 text=str(step + 1),
-                command=lambda step=step: self.drum_machine.toggle_step("hihat", step)
-            )
+                command=lambda step=step: self.toggle_hihat_step(step))
 
             # 作成したボタンをリストに追加する
             self.hihat_buttons.append(button)
@@ -266,3 +263,54 @@ class DrumMachineGUI:
                 row=2,
                 column=step
             )
+
+    def toggle_kick_step(self, step):
+        """
+        KICKのステップ状態を切り替えて、
+        ボタンの表示も更新する。
+        """
+
+        # KICKのステップ状態をON/OFF切り替える
+        self.drum_machine.toggle_step("kick", step)
+
+        # ONになっている場合はボタン表示をONにする
+        if self.drum_machine.patterns["kick"][step]:
+            self.kick_buttons[step]["text"] = "ON"
+
+        # OFFになっている場合は元の番号に戻す
+        else:
+            self.kick_buttons[step]["text"] = str(step + 1)
+
+    def toggle_snare_step(self, step):
+        """
+        SNAREのステップ状態を切り替えて、
+        ボタンの表示も更新する。
+        """
+
+        # SNAREのステップ状態をON/OFF切り替える
+        self.drum_machine.toggle_step("snare", step)
+
+        # ONになっている場合はボタン表示をONにする
+        if self.drum_machine.patterns["snare"][step]:
+            self.snare_buttons[step]["text"] = "ON"
+
+        # OFFになっている場合は元の番号に戻す
+        else:
+            self.snare_buttons[step]["text"] = str(step + 1)
+
+    def toggle_hihat_step(self, step):
+        """
+        HI-HATのステップ状態を切り替えて、
+        ボタンの表示も更新する。
+        """
+
+        # HI-HATのステップ状態をON/OFF切り替える
+        self.drum_machine.toggle_step("hihat", step)
+
+        # ONになっている場合はボタン表示をONにする
+        if self.drum_machine.patterns["hihat"][step]:
+            self.hihat_buttons[step]["text"] = "ON"
+
+        # OFFになっている場合は元の番号に戻す
+        else:
+            self.hihat_buttons[step]["text"] = str(step + 1)

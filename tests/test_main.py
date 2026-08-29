@@ -676,3 +676,96 @@ def test_hihat_step_buttons_use_grid_layout(tk_root):
 
     # HI-HATの1番目のボタンがgridで配置されていることを確認する
     assert gui.hihat_buttons[0].winfo_manager() == "grid"
+
+def test_kick_step_button_text_changes_to_on(tk_root):
+    """
+    KICKのステップボタンを押すと、
+    ボタンの表示がONに変わることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # KICKの1番目のボタンを押す
+    gui.kick_buttons[0].invoke()
+
+    # ボタンの表示がONになっていることを確認する
+    assert gui.kick_buttons[0]["text"] == "ON"
+
+def test_kick_step_button_text_returns_to_number(tk_root):
+    """
+    KICKのステップボタンを2回押すと、
+    ボタンの表示が元の番号に戻ることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # KICKの1番目のボタンを2回押す
+    gui.kick_buttons[0].invoke()
+    gui.kick_buttons[0].invoke()
+
+    # ボタンの表示が元の番号に戻っていることを確認する
+    assert gui.kick_buttons[0]["text"] == "1"
+
+def test_snare_step_button_text_changes_to_on(tk_root):
+    """
+    SNAREのステップボタンを押すと、
+    ボタンの表示がONに変わることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # SNAREの1番目のボタンを押す
+    gui.snare_buttons[0].invoke()
+
+    # ボタンの表示がONになっていることを確認する
+    assert gui.snare_buttons[0]["text"] == "ON"
+
+def test_hihat_step_button_text_changes_to_on(tk_root):
+    """
+    HI-HATのステップボタンを押すと、
+    ボタンの表示がONに変わることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # HI-HATの1番目のボタンを押す
+    gui.hihat_buttons[0].invoke()
+
+    # ボタンの表示がONになっていることを確認する
+    assert gui.hihat_buttons[0]["text"] == "ON"
+
+def test_snare_step_button_text_returns_to_number(tk_root):
+    """
+    SNAREのステップボタンを2回押すと、
+    ボタンの表示が元の番号に戻ることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # SNAREの1番目のボタンを2回押す
+    gui.snare_buttons[0].invoke()
+    gui.snare_buttons[0].invoke()
+
+    # ボタンの表示が元の番号に戻っていることを確認する
+    assert gui.snare_buttons[0]["text"] == "1"
+
+def test_hihat_step_button_text_returns_to_number(tk_root):
+    """
+    HI-HATのステップボタンを2回押すと、
+    ボタンの表示が元の番号に戻ることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # HI-HATの1番目のボタンを2回押す
+    gui.hihat_buttons[0].invoke()
+    gui.hihat_buttons[0].invoke()
+
+    # ボタンの表示が元の番号に戻っていることを確認する
+    assert gui.hihat_buttons[0]["text"] == "1"
