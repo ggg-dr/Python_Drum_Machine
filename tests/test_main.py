@@ -312,3 +312,34 @@ def test_play_step_returns_active_instruments_and_returns_to_zero_after_last_ste
 
     # 最後まで進んだので最初のステップ0に戻ることを確認する
     assert drum_machine.current_step == 0
+
+def test_update_playback_does_not_advance_when_stopped():
+    """
+    停止中は再生位置が進まないことを確認するテスト。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # 停止中のまま再生処理を更新する
+    drum_machine.update_playback()
+
+    # 停止中なので再生位置が進まないことを確認する
+    assert drum_machine.current_step == 0
+
+def test_update_playback_advances_when_playing():
+    """
+    再生中は再生位置が1ステップ進むことを確認するテスト。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # 再生を開始する
+    drum_machine.start()
+
+    # 再生処理を更新する
+    drum_machine.update_playback()
+
+    # 再生位置が1ステップ進んだことを確認する
+    assert drum_machine.current_step == 1

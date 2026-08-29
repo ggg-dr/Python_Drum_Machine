@@ -142,3 +142,17 @@ class DrumMachine:
 
         # 鳴らす楽器の一覧を返す
         return active_instruments
+
+    def update_playback(self):
+        """
+        再生状態に応じて1ステップ分の処理を実行する。
+
+        停止中の場合は何もしない。
+        """
+
+        # 停止中の場合は再生位置を進めない
+        if not self.is_playing:
+            return
+
+        # 再生中なら1ステップ分の処理を実行する
+        self.play_step()
