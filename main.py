@@ -201,6 +201,27 @@ class DrumMachineGUI:
         # 停止ボタンをウィンドウ上に配置する
         self.stop_button.pack()
 
+        # BPM入力欄を作成する
+        self.bpm_entry = tk.Entry(
+            self.root
+        )
+
+        # 初期BPMを入力欄に表示する
+        self.bpm_entry.insert(
+            0,
+            str(self.drum_machine.bpm)
+        )
+
+        # BPM更新ボタンを作成する
+        self.bpm_update_button = tk.Button(
+            self.root,
+            text="BPM更新",
+            command=self.update_bpm
+        )
+
+        # BPM入力欄をウィンドウ上に配置する
+        self.bpm_entry.pack()
+
         # ステップボタンをまとめて配置するためのフレームを作成する
         self.pattern_frame = tk.Frame(self.root)
 
@@ -314,3 +335,23 @@ class DrumMachineGUI:
         # OFFになっている場合は元の番号に戻す
         else:
             self.hihat_buttons[step]["text"] = str(step + 1)
+
+    def update_bpm(self):
+        """
+        BPM入力欄の値を取得して、
+        ドラムマシンのBPMを変更する。
+        """
+
+        try:
+            # BPM入力欄に入力されている文字を取得する
+            bpm_text = self.bpm_entry.get()
+
+            # 入力された文字を整数に変換する
+            bpm = int(bpm_text)
+
+            # ドラムマシンのBPMを変更する
+            self.drum_machine.set_bpm(bpm)
+
+        except ValueError:
+            # 数字以外や0以下の値が入力された場合は何もしない
+            pass

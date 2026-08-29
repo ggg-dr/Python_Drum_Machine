@@ -769,3 +769,123 @@ def test_hihat_step_button_text_returns_to_number(tk_root):
 
     # ボタンの表示が元の番号に戻っていることを確認する
     assert gui.hihat_buttons[0]["text"] == "1"
+
+def test_drum_machine_gui_has_bpm_entry(tk_root):
+    """
+    GUIにBPM入力欄が
+    作成されていることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # BPM入力欄があることを確認する
+    assert gui.bpm_entry is not None
+
+def test_bpm_entry_has_initial_bpm(tk_root):
+    """
+    BPM入力欄に初期BPMの120が
+    表示されていることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # BPM入力欄に120が表示されていることを確認する
+    assert gui.bpm_entry.get() == "120"
+
+def test_bpm_entry_updates_drum_machine_bpm(tk_root):
+    """
+    BPM入力欄の値を使って、
+    ドラムマシンのBPMを変更できることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # BPM入力欄の内容を削除する
+    gui.bpm_entry.delete(0, tk.END)
+
+    # 新しいBPMを入力する
+    gui.bpm_entry.insert(0, "140")
+
+    # BPMを反映する処理を実行する
+    gui.update_bpm()
+
+    # ドラムマシンのBPMが140になっていることを確認する
+    assert gui.drum_machine.bpm == 140
+
+def test_drum_machine_gui_has_bpm_update_button(tk_root):
+    """
+    GUIにBPM更新ボタンが
+    作成されていることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # BPM更新ボタンがあることを確認する
+    assert gui.bpm_update_button is not None
+
+def test_bpm_update_button_updates_drum_machine_bpm(tk_root):
+    """
+    BPM更新ボタンを押すと、
+    ドラムマシンのBPMが変更されることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # BPM入力欄の内容を削除する
+    gui.bpm_entry.delete(0, tk.END)
+
+    # 新しいBPMを入力する
+    gui.bpm_entry.insert(0, "140")
+
+    # BPM更新ボタンを押す
+    gui.bpm_update_button.invoke()
+
+    # ドラムマシンのBPMが140になっていることを確認する
+    assert gui.drum_machine.bpm == 140
+
+def test_update_bpm_with_zero_does_not_change_bpm(tk_root):
+    """
+    BPM入力欄に0を入力した場合、
+    BPMが変更されないことを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # BPM入力欄の内容を削除する
+    gui.bpm_entry.delete(0, tk.END)
+
+    # 0を入力する
+    gui.bpm_entry.insert(0, "0")
+
+    # BPM更新処理を実行する
+    gui.update_bpm()
+
+    # BPMが初期値120のままであることを確認する
+    assert gui.drum_machine.bpm == 120
+
+def test_update_bpm_with_text_does_not_change_bpm(tk_root):
+    """
+    BPM入力欄に数字以外を入力した場合、
+    BPMが変更されないことを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # BPM入力欄の内容を削除する
+    gui.bpm_entry.delete(0, tk.END)
+
+    # 数字ではない文字を入力する
+    gui.bpm_entry.insert(0, "abc")
+
+    # BPM更新処理を実行する
+    gui.update_bpm()
+
+    # BPMが初期値120のままであることを確認する
+    assert gui.drum_machine.bpm == 120
