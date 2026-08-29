@@ -1,8 +1,9 @@
 # main.pyからDrumMachineクラスを読み込む
 # ※まだmain.pyにはDrumMachineが存在しないため、
 #   最初のテストでは失敗する想定
-from main import DrumMachine
+from main import DrumMachine, DrumMachineGUI
 import pytest
+import tkinter as tk
 
 
 def test_drum_patterns_are_initialized():
@@ -364,3 +365,205 @@ def test_update_playback_returns_active_instruments_when_playing():
 
     # 現在のステップでONの楽器が返ることを確認する
     assert active_instruments == ["kick"]
+
+def test_update_playback_returns_none_when_stopped():
+    """
+    停止中は楽器を再生せず、
+    Noneが返ることを確認するテスト。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # 停止中のまま再生処理を更新する
+    active_instruments = drum_machine.update_playback()
+
+    # 停止中なので何も返らないことを確認する
+    assert active_instruments is None
+
+def test_drum_machine_gui_can_be_created():
+    """
+    ドラムマシンのGUIを作成できることを確認するテスト。
+    """
+
+    # GUIを作成する
+    gui = DrumMachineGUI()
+
+    # GUIが作成されたことを確認する
+    assert gui is not None
+
+def test_drum_machine_gui_has_drum_machine():
+    """
+    GUIがDrumMachineを持っていることを確認するテスト。
+    """
+
+    # GUIを作成する
+    gui = DrumMachineGUI()
+
+    # GUIがDrumMachineを持っていることを確認する
+    assert isinstance(gui.drum_machine, DrumMachine)
+
+def test_drum_machine_gui_stores_root():
+    """
+    GUIが渡されたTkinterのrootを
+    保持できることを確認するテスト。
+    """
+
+    # Tkinterのメインウィンドウを作成する
+    root = tk.Tk()
+
+    # テスト中はウィンドウを画面に表示しない
+    root.withdraw()
+
+    # rootを渡してGUIを作成する
+    gui = DrumMachineGUI(root)
+
+    # GUIが渡されたrootを保持していることを確認する
+    assert gui.root is root
+
+    # テスト後にウィンドウを破棄する
+    root.destroy()
+
+def test_drum_machine_gui_can_be_created():
+    """
+    ドラムマシンのGUIを作成できることを確認するテスト。
+    """
+
+    # Tkinterのメインウィンドウを作成する
+    root = tk.Tk()
+
+    # テスト中はウィンドウを画面に表示しない
+    root.withdraw()
+
+    # rootを渡してGUIを作成する
+    gui = DrumMachineGUI(root)
+
+    # GUIが正常に作成されたことを確認する
+    assert gui is not None
+
+    # テスト後にウィンドウを破棄する
+    root.destroy()
+
+
+
+def test_drum_machine_gui_sets_window_title():
+    """
+    GUI作成時にウィンドウタイトルが
+    設定されることを確認するテスト。
+    """
+
+    # Tkinterのメインウィンドウを作成する
+    root = tk.Tk()
+    root.withdraw()
+
+    # GUIを作成する
+    DrumMachineGUI(root)
+
+    # ウィンドウタイトルを確認する
+    assert root.title() == "Python Drum Machine"
+
+    # テスト後にウィンドウを破棄する
+    root.destroy()
+
+def test_drum_machine_gui_has_drum_machine():
+    """
+    GUIがDrumMachineを持っていることを確認するテスト。
+    """
+
+    # Tkinterのメインウィンドウを作成する
+    root = tk.Tk()
+
+    # テスト中はウィンドウを画面に表示しない
+    root.withdraw()
+
+    # rootを渡してGUIを作成する
+    gui = DrumMachineGUI(root)
+
+    # GUIがDrumMachineを持っていることを確認する
+    assert isinstance(gui.drum_machine, DrumMachine)
+
+    # テスト後にウィンドウを破棄する
+    root.destroy()
+
+def test_play_button_text_is_play():
+    """
+    再生ボタンに「再生」と表示されることを確認するテスト。
+    """
+
+    # Tkinterのメインウィンドウを作成する
+    root = tk.Tk()
+    root.withdraw()
+
+    # GUIを作成する
+    gui = DrumMachineGUI(root)
+
+    # 再生ボタンの文字を確認する
+    assert gui.play_button["text"] == "再生"
+
+    # テスト後にウィンドウを破棄する
+    root.destroy()
+
+def test_play_button_starts_drum_machine():
+    """
+    再生ボタンを押すと、
+    ドラムマシンが再生状態になることを確認するテスト。
+    """
+
+    # Tkinterのメインウィンドウを作成する
+    root = tk.Tk()
+    root.withdraw()
+
+    # GUIを作成する
+    gui = DrumMachineGUI(root)
+
+    # 再生ボタンを押す
+    gui.play_button.invoke()
+
+    # 再生状態になっていることを確認する
+    assert gui.drum_machine.is_playing is True
+
+    # テスト後にウィンドウを破棄する
+    root.destroy()
+
+def test_drum_machine_gui_has_stop_button():
+    """
+    GUIに停止ボタンがあることを確認するテスト。
+    """
+
+    # Tkinterのメインウィンドウを作成する
+    root = tk.Tk()
+    root.withdraw()
+
+    # GUIを作成する
+    gui = DrumMachineGUI(root)
+
+    # 停止ボタンが作成されていることを確認する
+    assert gui.stop_button is not None
+
+    # テスト後にウィンドウを破棄する
+    root.destroy()
+
+def test_stop_button_stops_drum_machine():
+    """
+    停止ボタンを押すと、
+    ドラムマシンが停止状態になることを確認するテスト。
+    """
+
+    # Tkinterのメインウィンドウを作成する
+    root = tk.Tk()
+    root.withdraw()
+
+    # GUIを作成する
+    gui = DrumMachineGUI(root)
+
+    # まず再生状態にする
+    gui.drum_machine.start()
+
+    # 停止ボタンを押す
+    gui.stop_button.invoke()
+
+    # 停止状態になっていることを確認する
+    assert gui.drum_machine.is_playing is False
+
+    # テスト後にウィンドウを破棄する
+    root.destroy()

@@ -1,3 +1,5 @@
+import tkinter as tk
+
 class DrumMachine:
     """
     ドラムマシンのデータや処理を管理するクラス。
@@ -159,3 +161,42 @@ class DrumMachine:
         # 再生中なら1ステップ分の処理を実行し、
         # ONになっている楽器を返す
         return self.play_step()
+
+class DrumMachineGUI:
+    """
+    ドラムマシンのGUIを管理するクラス。
+    """
+
+    def __init__(self, root=None):
+        """
+        GUIの初期状態を作成する。
+        """
+
+        # GUIで使用するrootを保持する
+        self.root = root
+
+        # ウィンドウタイトルを設定する
+        self.root.title("Python Drum Machine")
+
+        # GUIから操作するドラムマシン本体を作成する
+        self.drum_machine = DrumMachine()
+
+        # 再生ボタンを作成する
+        self.play_button = tk.Button(
+            self.root,
+            text="再生",
+            command=self.drum_machine.start
+        )
+
+        # 停止ボタンを作成する
+        self.stop_button = tk.Button(
+            self.root,
+            text="停止"
+        )
+
+        # 停止ボタンを作成する
+        self.stop_button = tk.Button(
+            self.root,
+            text="停止",
+            command=self.drum_machine.stop
+        )
