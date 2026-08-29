@@ -112,3 +112,18 @@ class DrumMachine:
                 active_instruments.append(instrument)
 
         return active_instruments
+
+    def set_bpm(self, bpm):
+        """
+        BPMを指定した値に変更する。
+
+        0以下の値が指定された場合は、
+        ValueErrorを発生させる。
+        """
+
+        # 0以下のBPMは使用できないためエラーにする
+        if bpm <= 0:
+            raise ValueError("BPMは1以上にしてください")
+
+        # BPMを指定された値に変更する
+        self.bpm = bpm

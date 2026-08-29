@@ -2,6 +2,7 @@
 # ※まだmain.pyにはDrumMachineが存在しないため、
 #   最初のテストでは失敗する想定
 from main import DrumMachine
+import pytest
 
 
 def test_drum_patterns_are_initialized():
@@ -237,3 +238,31 @@ def test_get_active_instruments_returns_empty_list_when_all_steps_are_off():
 
     # すべてOFFなので空のリストになることを確認する
     assert active_instruments == []
+
+def test_set_bpm_changes_bpm():
+    """
+    BPMを変更できることを確認するテスト。
+
+    初期値は120 BPMだが、
+    set_bpm()を実行すると指定したBPMに
+    変更されることを確認する。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # BPMを140に変更する
+    drum_machine.set_bpm(140)
+
+    # BPMが140に変更されたことを確認する
+    assert drum_machine.bpm == 140
+
+def test_set_bpm_rejects_zero_or_negative_value():
+    """
+    0以下のBPMを設定できないことを確認するテスト。
+    """
+
+    drum_machine = DrumMachine()
+
+    with pytest.raises(ValueError):
+        drum_machine.set_bpm(0)
