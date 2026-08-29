@@ -1,0 +1,12 @@
+# Pythonの仮想環境
+.venv/
+
+# Pythonが自動生成するキャッシュファイル
+__pycache__/
+*.pyc
+
+# pytestが自動生成するキャッシュ
+.pytest_cache/
+
+# PyCharmのプロジェクト設定
+.idea/
