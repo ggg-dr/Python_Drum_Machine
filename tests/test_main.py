@@ -5,6 +5,25 @@ from main import DrumMachine, DrumMachineGUI
 import pytest
 import tkinter as tk
 
+@pytest.fixture(scope="module")
+def tk_root():
+    """
+    GUIテストで共通して使用する
+    Tkinterのrootを作成する。
+    """
+
+    # Tkinterのメインウィンドウを1回だけ作成する
+    root = tk.Tk()
+
+    # テスト中はウィンドウを画面に表示しない
+    root.withdraw()
+
+    # 各テストでrootを使用できるように渡す
+    yield root
+
+    # すべてのGUIテスト終了後にrootを破棄する
+    root.destroy()
+
 
 def test_drum_patterns_are_initialized():
     """
@@ -381,140 +400,75 @@ def test_update_playback_returns_none_when_stopped():
     # 停止中なので何も返らないことを確認する
     assert active_instruments is None
 
-def test_drum_machine_gui_can_be_created():
-    """
-    ドラムマシンのGUIを作成できることを確認するテスト。
-    """
 
-    # GUIを作成する
-    gui = DrumMachineGUI()
-
-    # GUIが作成されたことを確認する
-    assert gui is not None
-
-def test_drum_machine_gui_has_drum_machine():
-    """
-    GUIがDrumMachineを持っていることを確認するテスト。
-    """
-
-    # GUIを作成する
-    gui = DrumMachineGUI()
-
-    # GUIがDrumMachineを持っていることを確認する
-    assert isinstance(gui.drum_machine, DrumMachine)
-
-def test_drum_machine_gui_stores_root():
+def test_drum_machine_gui_stores_root(tk_root):
     """
     GUIが渡されたTkinterのrootを
     保持できることを確認するテスト。
     """
 
-    # Tkinterのメインウィンドウを作成する
-    root = tk.Tk()
-
-    # テスト中はウィンドウを画面に表示しない
-    root.withdraw()
-
-    # rootを渡してGUIを作成する
-    gui = DrumMachineGUI(root)
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
 
     # GUIが渡されたrootを保持していることを確認する
-    assert gui.root is root
+    assert gui.root is tk_root
 
-    # テスト後にウィンドウを破棄する
-    root.destroy()
-
-def test_drum_machine_gui_can_be_created():
+def test_drum_machine_gui_can_be_created(tk_root):
     """
     ドラムマシンのGUIを作成できることを確認するテスト。
     """
 
-    # Tkinterのメインウィンドウを作成する
-    root = tk.Tk()
-
-    # テスト中はウィンドウを画面に表示しない
-    root.withdraw()
-
-    # rootを渡してGUIを作成する
-    gui = DrumMachineGUI(root)
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
 
     # GUIが正常に作成されたことを確認する
     assert gui is not None
 
-    # テスト後にウィンドウを破棄する
-    root.destroy()
 
 
-
-def test_drum_machine_gui_sets_window_title():
+def test_drum_machine_gui_sets_window_title(tk_root):
     """
     GUI作成時にウィンドウタイトルが
     設定されることを確認するテスト。
     """
 
-    # Tkinterのメインウィンドウを作成する
-    root = tk.Tk()
-    root.withdraw()
-
-    # GUIを作成する
-    DrumMachineGUI(root)
+    # 共通のTkinter rootを使ってGUIを作成する
+    DrumMachineGUI(tk_root)
 
     # ウィンドウタイトルを確認する
-    assert root.title() == "Python Drum Machine"
+    assert tk_root.title() == "Python Drum Machine"
 
-    # テスト後にウィンドウを破棄する
-    root.destroy()
-
-def test_drum_machine_gui_has_drum_machine():
+def test_drum_machine_gui_has_drum_machine(tk_root):
     """
     GUIがDrumMachineを持っていることを確認するテスト。
     """
 
-    # Tkinterのメインウィンドウを作成する
-    root = tk.Tk()
-
-    # テスト中はウィンドウを画面に表示しない
-    root.withdraw()
-
-    # rootを渡してGUIを作成する
-    gui = DrumMachineGUI(root)
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
 
     # GUIがDrumMachineを持っていることを確認する
     assert isinstance(gui.drum_machine, DrumMachine)
 
-    # テスト後にウィンドウを破棄する
-    root.destroy()
 
-def test_play_button_text_is_play():
+def test_play_button_text_is_play(tk_root):
     """
     再生ボタンに「再生」と表示されることを確認するテスト。
     """
 
-    # Tkinterのメインウィンドウを作成する
-    root = tk.Tk()
-    root.withdraw()
-
-    # GUIを作成する
-    gui = DrumMachineGUI(root)
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
 
     # 再生ボタンの文字を確認する
     assert gui.play_button["text"] == "再生"
 
-    # テスト後にウィンドウを破棄する
-    root.destroy()
-
-def test_play_button_starts_drum_machine():
+def test_play_button_starts_drum_machine(tk_root):
     """
     再生ボタンを押すと、
     ドラムマシンが再生状態になることを確認するテスト。
     """
 
-    # Tkinterのメインウィンドウを作成する
-    root = tk.Tk()
-    root.withdraw()
-
-    # GUIを作成する
-    gui = DrumMachineGUI(root)
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
 
     # 再生ボタンを押す
     gui.play_button.invoke()
@@ -522,39 +476,25 @@ def test_play_button_starts_drum_machine():
     # 再生状態になっていることを確認する
     assert gui.drum_machine.is_playing is True
 
-    # テスト後にウィンドウを破棄する
-    root.destroy()
-
-def test_drum_machine_gui_has_stop_button():
+def test_drum_machine_gui_has_stop_button(tk_root):
     """
     GUIに停止ボタンがあることを確認するテスト。
     """
 
-    # Tkinterのメインウィンドウを作成する
-    root = tk.Tk()
-    root.withdraw()
-
-    # GUIを作成する
-    gui = DrumMachineGUI(root)
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
 
     # 停止ボタンが作成されていることを確認する
     assert gui.stop_button is not None
 
-    # テスト後にウィンドウを破棄する
-    root.destroy()
-
-def test_stop_button_stops_drum_machine():
+def test_stop_button_stops_drum_machine(tk_root):
     """
     停止ボタンを押すと、
     ドラムマシンが停止状態になることを確認するテスト。
     """
 
-    # Tkinterのメインウィンドウを作成する
-    root = tk.Tk()
-    root.withdraw()
-
-    # GUIを作成する
-    gui = DrumMachineGUI(root)
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
 
     # まず再生状態にする
     gui.drum_machine.start()
@@ -565,5 +505,174 @@ def test_stop_button_stops_drum_machine():
     # 停止状態になっていることを確認する
     assert gui.drum_machine.is_playing is False
 
-    # テスト後にウィンドウを破棄する
-    root.destroy()
+def test_play_button_is_managed_by_layout(tk_root):
+    """
+    再生ボタンがGUI上に配置されていることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # 再生ボタンがレイアウト管理されていることを確認する
+    assert gui.play_button.winfo_manager() != ""
+
+def test_stop_button_is_managed_by_layout(tk_root):
+    """
+    停止ボタンがGUI上に配置されていることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # 停止ボタンがレイアウト管理されていることを確認する
+    assert gui.stop_button.winfo_manager() != ""
+
+def test_drum_machine_gui_has_16_kick_step_buttons(tk_root):
+    """
+    GUIにKICK用の16ステップボタンが
+    作成されていることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # KICK用のステップボタンが16個あることを確認する
+    assert len(gui.kick_buttons) == 16
+
+def test_kick_step_buttons_are_managed_by_layout(tk_root):
+    """
+    KICK用の16ステップボタンが
+    GUI上に配置されていることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # すべてのKICKボタンがレイアウト管理されていることを確認する
+    assert all(
+        button.winfo_manager() != ""
+        for button in gui.kick_buttons
+    )
+
+def test_kick_step_button_toggles_kick_pattern(tk_root):
+    """
+    KICKのステップボタンを押すと、
+    対応するステップがONになることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # KICKの1番目のボタンを押す
+    gui.kick_buttons[0].invoke()
+
+    # KICKの1番目のステップがONになっていることを確認する
+    assert gui.drum_machine.patterns["kick"][0] is True
+
+def test_kick_step_button_toggles_kick_pattern_off_again(tk_root):
+    """
+    KICKのステップボタンを2回押すと、
+    対応するステップがOFFに戻ることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # KICKの1番目のボタンを1回押してONにする
+    gui.kick_buttons[0].invoke()
+
+    # 同じボタンをもう一度押してOFFに戻す
+    gui.kick_buttons[0].invoke()
+
+    # KICKの1番目のステップがOFFに戻っていることを確認する
+    assert gui.drum_machine.patterns["kick"][0] is False
+
+def test_drum_machine_gui_has_16_snare_step_buttons(tk_root):
+    """
+    GUIにSNARE用の16ステップボタンが
+    作成されていることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # SNARE用のステップボタンが16個あることを確認する
+    assert len(gui.snare_buttons) == 16
+
+def test_snare_step_button_toggles_snare_pattern(tk_root):
+    """
+    SNAREのステップボタンを押すと、
+    対応するステップがONになることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # SNAREの1番目のボタンを押す
+    gui.snare_buttons[0].invoke()
+
+    # SNAREの1番目のステップがONになっていることを確認する
+    assert gui.drum_machine.patterns["snare"][0] is True
+
+def test_drum_machine_gui_has_16_hihat_step_buttons(tk_root):
+    """
+    GUIにHI-HAT用の16ステップボタンが
+    作成されていることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # HI-HAT用のステップボタンが16個あることを確認する
+    assert len(gui.hihat_buttons) == 16
+
+def test_hihat_step_button_toggles_hihat_pattern(tk_root):
+    """
+    HI-HATのステップボタンを押すと、
+    対応するステップがONになることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # HI-HATの1番目のボタンを押す
+    gui.hihat_buttons[0].invoke()
+
+    # HI-HATの1番目のステップがONになっていることを確認する
+    assert gui.drum_machine.patterns["hihat"][0] is True
+
+def test_kick_step_buttons_use_grid_layout(tk_root):
+    """
+    KICK用のステップボタンが
+    gridレイアウトで配置されることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # KICKの1番目のボタンがgridで配置されていることを確認する
+    assert gui.kick_buttons[0].winfo_manager() == "grid"
+
+def test_snare_step_buttons_use_grid_layout(tk_root):
+    """
+    SNARE用のステップボタンが
+    gridレイアウトで配置されることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # SNAREの1番目のボタンがgridで配置されていることを確認する
+    assert gui.snare_buttons[0].winfo_manager() == "grid"
+
+def test_hihat_step_buttons_use_grid_layout(tk_root):
+    """
+    HI-HAT用のステップボタンが
+    gridレイアウトで配置されることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # HI-HATの1番目のボタンがgridで配置されていることを確認する
+    assert gui.hihat_buttons[0].winfo_manager() == "grid"

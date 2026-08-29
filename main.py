@@ -188,11 +188,8 @@ class DrumMachineGUI:
             command=self.drum_machine.start
         )
 
-        # 停止ボタンを作成する
-        self.stop_button = tk.Button(
-            self.root,
-            text="停止"
-        )
+        # 再生ボタンをウィンドウ上に配置する
+        self.play_button.pack()
 
         # 停止ボタンを作成する
         self.stop_button = tk.Button(
@@ -200,3 +197,72 @@ class DrumMachineGUI:
             text="停止",
             command=self.drum_machine.stop
         )
+
+        # 停止ボタンをウィンドウ上に配置する
+        self.stop_button.pack()
+
+        # ステップボタンをまとめて配置するためのフレームを作成する
+        self.pattern_frame = tk.Frame(self.root)
+
+        # フレーム自体はrootにpackで配置する
+        self.pattern_frame.pack()
+
+        # KICK用のステップボタンを入れるリストを作成する
+        self.kick_buttons = []
+
+        # KICK用の16ステップボタンを作成する
+        for step in range(16):
+            button = tk.Button(
+                self.pattern_frame,
+                text=str(step + 1),
+                command=lambda step=step: self.drum_machine.toggle_step("kick", step)
+            )
+
+            # 作成したボタンをリストに追加する
+            self.kick_buttons.append(button)
+
+            # KICK用のボタンを横16列に配置する
+            button.grid(
+                row=0,
+                column=step
+            )
+
+        # SNARE用のステップボタンを入れるリストを作成する
+        self.snare_buttons = []
+
+        # SNARE用の16ステップボタンを作成する
+        for step in range(16):
+            button = tk.Button(
+                self.pattern_frame,
+                text=str(step + 1),
+                command=lambda step=step: self.drum_machine.toggle_step("snare", step)
+            )
+
+            # 作成したボタンをリストに追加する
+            self.snare_buttons.append(button)
+
+            # SNARE用のボタンを横16列に配置する
+            button.grid(
+                row=1,
+                column=step
+            )
+
+        # HI-HAT用のステップボタンを入れるリストを作成する
+        self.hihat_buttons = []
+
+        # HI-HAT用の16ステップボタンを作成する
+        for step in range(16):
+            button = tk.Button(
+                self.pattern_frame,
+                text=str(step + 1),
+                command=lambda step=step: self.drum_machine.toggle_step("hihat", step)
+            )
+
+            # 作成したボタンをリストに追加する
+            self.hihat_buttons.append(button)
+
+            # HI-HAT用のボタンを横16列に配置する
+            button.grid(
+                row=2,
+                column=step
+            )
