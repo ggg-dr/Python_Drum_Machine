@@ -266,3 +266,49 @@ def test_set_bpm_rejects_zero_or_negative_value():
 
     with pytest.raises(ValueError):
         drum_machine.set_bpm(0)
+
+def test_play_step_returns_active_instruments_and_advances_step():
+    """
+    現在のステップで鳴らす楽器を取得し、
+    そのあと再生位置が次のステップへ進むことを確認する。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # 現在のステップ0でKICKをONにする
+    drum_machine.patterns["kick"][0] = True
+
+    # 1ステップ分の再生処理を実行する
+    active_instruments = drum_machine.play_step()
+
+    # 現在のステップでONの楽器が取得できることを確認する
+    assert active_instruments == ["kick"]
+
+    # 再生位置が次のステップへ進んでいることを確認する
+    assert drum_machine.current_step == 1
+
+def test_play_step_returns_active_instruments_and_returns_to_zero_after_last_step():
+    """
+    最後のステップを再生した場合でも、
+    ONになっている楽器を取得したあと、
+    再生位置が最初のステップ0に戻ることを確認する。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # 再生位置を最後のステップ15にする
+    drum_machine.current_step = 15
+
+    # 最後のステップでSNAREをONにする
+    drum_machine.patterns["snare"][15] = True
+
+    # 1ステップ分の再生処理を実行する
+    active_instruments = drum_machine.play_step()
+
+    # 最後のステップでONのSNAREが取得できることを確認する
+    assert active_instruments == ["snare"]
+
+    # 最後まで進んだので最初のステップ0に戻ることを確認する
+    assert drum_machine.current_step == 0

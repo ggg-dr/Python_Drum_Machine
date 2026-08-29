@@ -127,3 +127,18 @@ class DrumMachine:
 
         # BPMを指定された値に変更する
         self.bpm = bpm
+
+    def play_step(self):
+        """
+        現在のステップで鳴らす楽器を取得し、
+        再生位置を次のステップへ進める。
+        """
+
+        # 現在のステップでONになっている楽器を取得する
+        active_instruments = self.get_active_instruments()
+
+        # 再生位置を次のステップへ進める
+        self.advance_step()
+
+        # 鳴らす楽器の一覧を返す
+        return active_instruments
