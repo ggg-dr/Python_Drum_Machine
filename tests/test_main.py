@@ -343,3 +343,24 @@ def test_update_playback_advances_when_playing():
 
     # 再生位置が1ステップ進んだことを確認する
     assert drum_machine.current_step == 1
+
+def test_update_playback_returns_active_instruments_when_playing():
+    """
+    再生中は現在のステップでONになっている楽器を
+    取得できることを確認するテスト。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # 現在のステップ0でKICKをONにする
+    drum_machine.patterns["kick"][0] = True
+
+    # 再生を開始する
+    drum_machine.start()
+
+    # 再生処理を更新する
+    active_instruments = drum_machine.update_playback()
+
+    # 現在のステップでONの楽器が返ることを確認する
+    assert active_instruments == ["kick"]
