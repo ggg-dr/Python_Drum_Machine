@@ -166,3 +166,74 @@ def test_stop_changes_is_playing_to_false():
 
     # 停止中(False)になったことを確認する
     assert drum_machine.is_playing is False
+
+def test_advance_step_moves_to_next_step():
+    """
+    再生位置を次のステップへ進められることを確認するテスト。
+
+    初期状態ではcurrent_stepは0なので、
+    advance_step()を実行すると
+    1になることを確認する。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # 再生位置を1ステップ進める
+    drum_machine.advance_step()
+
+    # current_stepが1になったことを確認する
+    assert drum_machine.current_step == 1
+
+def test_advance_step_returns_to_zero_after_last_step():
+    """
+    最後のステップの次は、
+    最初のステップに戻ることを確認するテスト。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # 最後のステップに移動する
+    drum_machine.current_step = 15
+
+    # 再生位置を1ステップ進める
+    drum_machine.advance_step()
+
+    # 最初のステップ0に戻ることを確認する
+    assert drum_machine.current_step == 0
+
+def test_get_active_instruments_returns_instruments_on_current_step():
+    """
+    現在のステップでONになっている楽器を
+    取得できることを確認するテスト。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # 現在のステップ0でKICKとHI-HATをONにする
+    drum_machine.patterns["kick"][0] = True
+    drum_machine.patterns["hihat"][0] = True
+
+    # 現在のステップで鳴らす楽器を取得する
+    active_instruments = drum_machine.get_active_instruments()
+
+    # KICKとHI-HATが取得できることを確認する
+    assert active_instruments == ["kick", "hihat"]
+
+
+def test_get_active_instruments_returns_empty_list_when_all_steps_are_off():
+    """
+    現在のステップですべての楽器がOFFの場合、
+    空のリストが返ることを確認するテスト。
+    """
+
+    # ドラムマシンを作成する
+    drum_machine = DrumMachine()
+
+    # 現在のステップで鳴らす楽器を取得する
+    active_instruments = drum_machine.get_active_instruments()
+
+    # すべてOFFなので空のリストになることを確認する
+    assert active_instruments == []

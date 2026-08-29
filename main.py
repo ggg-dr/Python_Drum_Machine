@@ -79,3 +79,36 @@ class DrumMachine:
 
         # 停止中の状態に変更する
         self.is_playing = False
+
+    def advance_step(self):
+        """
+        再生位置を次のステップへ進める。
+
+        最後のステップまで進んだ場合は、
+        最初のステップ0に戻る。
+        """
+
+        # 現在の再生位置を1つ進める
+        self.current_step += 1
+
+        #16ステップ目を超えたら最初に戻す
+        if self.current_step >= 16:
+            self.current_step = 0
+
+        #短く書くにはこう
+        #def advance_step(self):
+        #    self.current_step = (self.current_step + 1) % 16
+
+    def get_active_instruments(self):
+        """
+        現在のステップでONになっている楽器を取得する。
+        """
+
+        active_instruments = []
+
+        # 各楽器について、現在のステップがONか確認する
+        for instrument in self.patterns:
+            if self.patterns[instrument][self.current_step]:
+                active_instruments.append(instrument)
+
+        return active_instruments
