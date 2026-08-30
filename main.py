@@ -1,5 +1,6 @@
 import tkinter as tk
 import pygame
+from pathlib import Path
 class DrumMachine:
     """
     ドラムマシンのデータや処理を管理するクラス。
@@ -181,11 +182,14 @@ class DrumMachineGUI:
         # GUIから操作するドラムマシン本体を作成する
         self.drum_machine = DrumMachine()
 
+        # main.pyがあるフォルダの場所を取得する
+        base_dir = Path(__file__).parent
+
         # 各楽器の音声ファイルを管理する
         self.sound_files = {
-            "kick": "sounds/kick.wav",
-            "snare": "sounds/snare.wav",
-            "hihat": "sounds/hihat.wav"
+            "kick": base_dir / "sounds" / "kick.wav",
+            "snare": base_dir / "sounds" / "snare.wav",
+            "hihat": base_dir / "sounds" / "hihat.wav"
         }
 
         # pygameの音声機能を初期化する

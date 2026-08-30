@@ -1428,3 +1428,22 @@ def test_update_bpm_clears_error_message_for_valid_value(tk_root):
 
     assert gui.bpm_error_label["text"] == ""
 
+def test_sound_files_can_be_loaded_from_different_directory(
+    tk_root,
+    monkeypatch,
+    tmp_path
+):
+    """
+    別のフォルダから実行しても、
+    音声ファイルを読み込めることを確認する。
+    """
+
+    # 現在の作業フォルダを一時フォルダに変更する
+    monkeypatch.chdir(tmp_path)
+
+    # 作業フォルダが変わっていてもGUIを作成できる
+    gui = DrumMachineGUI(tk_root)
+
+    assert gui.sounds["kick"] is not None
+    assert gui.sounds["snare"] is not None
+    assert gui.sounds["hihat"] is not None
