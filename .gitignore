@@ -10,3 +10,6 @@ __pycache__/
 
 # PyCharmのプロジェクト設定
 .idea/
+
+# ドラム音源ファイル
+sounds/*.wav
