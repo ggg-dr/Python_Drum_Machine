@@ -4,7 +4,6 @@
 from main import DrumMachine, DrumMachineGUI
 import pytest
 import tkinter as tk
-import winsound
 import main
 
 @pytest.fixture(scope="module")
@@ -1447,3 +1446,26 @@ def test_sound_files_can_be_loaded_from_different_directory(
     assert gui.sounds["kick"] is not None
     assert gui.sounds["snare"] is not None
     assert gui.sounds["hihat"] is not None
+
+def test_missing_sound_file_raises_clear_error(tk_root, monkeypatch):
+    """
+    音源ファイルが読み込めない場合に、
+    分かりやすいエラーが発生することを確認する。
+    """
+
+    # pygameが音源を読み込めなかった状態を再現する
+    def fake_sound(sound_file):
+        raise FileNotFoundError("file not found")
+
+    monkeypatch.setattr(
+        main.pygame.mixer,
+        "Sound",
+        fake_sound
+    )
+
+    # 分かりやすい日本語エラーになることを確認する
+    with pytest.raises(
+        FileNotFoundError,
+        match="音源ファイルが見つかりません"
+    ):
+        DrumMachineGUI(tk_root)

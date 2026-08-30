@@ -196,11 +196,17 @@ class DrumMachineGUI:
         pygame.mixer.init()
 
         # 各楽器の音声ファイルを読み込む
-        self.sounds = {
-            "kick": pygame.mixer.Sound(self.sound_files["kick"]),
-            "snare": pygame.mixer.Sound(self.sound_files["snare"]),
-            "hihat": pygame.mixer.Sound(self.sound_files["hihat"])
-        }
+        try:
+            self.sounds = {
+                "kick": pygame.mixer.Sound(str(self.sound_files["kick"])),
+                "snare": pygame.mixer.Sound(str(self.sound_files["snare"])),
+                "hihat": pygame.mixer.Sound(str(self.sound_files["hihat"]))
+            }
+
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                "音源ファイルが見つかりません"
+            )
 
         # 再生ボタンを作成する
         self.play_button = tk.Button(
