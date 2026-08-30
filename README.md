@@ -5,6 +5,10 @@ PythonとTkinterを使用して作成した、16ステップ式のドラムマ�
 KICK、SNARE、HI-HATの3種類のドラムパターンを自由に設定し、
 指定したBPMに合わせてパターンを繰り返し再生できます。
 
+## アプリ画面
+
+![Python Drum Machine](images/drum_machine.png)
+
 ## 主な機能
 
 - KICK / SNARE / HI-HATの16ステップパターン作成
