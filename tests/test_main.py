@@ -1329,3 +1329,51 @@ def test_play_instrument_uses_pygame_sound(tk_root):
     gui.play_instrument("kick")
 
     assert played == [True]
+
+def test_drum_machine_gui_has_instrument_labels(tk_root):
+    """
+    各ドラム行に楽器名のラベルがあることを確認する。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    assert gui.kick_label["text"] == "KICK"
+    assert gui.snare_label["text"] == "SNARE"
+    assert gui.hihat_label["text"] == "HI-HAT"
+
+def test_kick_step_button_changes_color_when_on(tk_root):
+    """
+    KICKのステップをONにしたとき、
+    ボタンの背景色が変わることを確認する。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # 変更前の背景色を保存する
+    original_color = gui.kick_buttons[0]["bg"]
+
+    # 1番目のKICKをONにする
+    gui.toggle_kick_step(0)
+
+    # 背景色が変更されていることを確認する
+    assert gui.kick_buttons[0]["bg"] != original_color
+
+def test_kick_step_button_color_returns_when_off(tk_root):
+    """
+    KICKのステップをOFFに戻したとき、
+    背景色も元に戻ることを確認する。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # 変更前の背景色を保存する
+    original_color = gui.kick_buttons[0]["bg"]
+
+    # ONにする
+    gui.toggle_kick_step(0)
+
+    # OFFに戻す
+    gui.toggle_kick_step(0)
+
+    # 背景色が元に戻ることを確認する
+    assert gui.kick_buttons[0]["bg"] == original_color
