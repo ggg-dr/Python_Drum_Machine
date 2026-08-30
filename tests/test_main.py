@@ -1106,3 +1106,102 @@ def test_start_playback_does_not_start_twice(tk_root):
 
     finally:
         gui.root.after = original_after
+
+def test_drum_machine_gui_has_update_current_step_display(tk_root):
+    """
+    GUIに現在の再生位置を表示する処理が
+    あることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # 現在位置を表示する処理があることを確認する
+    assert callable(gui.update_current_step_display)
+
+def test_update_current_step_display_highlights_current_kick_step(tk_root):
+    """
+    現在の再生位置のKICKボタンが
+    へこんだ表示になることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # 現在の再生位置を0にする
+    gui.drum_machine.current_step = 0
+
+    # 現在位置の表示を更新する
+    gui.update_current_step_display()
+
+    # 現在のステップのKICKボタンが
+    # へこんだ表示になっていることを確認する
+    assert gui.kick_buttons[0]["relief"] == "sunken"
+
+def test_update_current_step_display_resets_previous_kick_step(tk_root):
+    """
+    再生位置が進んだときに、
+    前のKICKボタンの表示が元に戻ることを確認するテスト。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # 最初はステップ0を現在位置にする
+    gui.drum_machine.current_step = 0
+    gui.update_current_step_display()
+
+    # 次にステップ1へ進める
+    gui.drum_machine.current_step = 1
+    gui.update_current_step_display()
+
+    # 前のステップ0は通常表示に戻る
+    assert gui.kick_buttons[0]["relief"] == "raised"
+
+    # 現在のステップ1はへこんだ表示になる
+    assert gui.kick_buttons[1]["relief"] == "sunken"
+
+def test_update_current_step_display_highlights_all_instruments(tk_root):
+    """
+    現在の再生位置で、
+    KICK・SNARE・HI-HATの同じ列が
+    へこんだ表示になることを確認するテスト。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # 現在の再生位置を2にする
+    gui.drum_machine.current_step = 2
+
+    # 現在位置の表示を更新する
+    gui.update_current_step_display()
+
+    # 3つの楽器の同じ列がへこんだ表示になる
+    assert gui.kick_buttons[2]["relief"] == "sunken"
+    assert gui.snare_buttons[2]["relief"] == "sunken"
+    assert gui.hihat_buttons[2]["relief"] == "sunken"
+
+def test_run_playback_step_updates_current_step_display(tk_root):
+    """
+    再生中の1ステップ処理で、
+    現在位置の表示も更新されることを確認するテスト。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # 再生状態にする
+    gui.drum_machine.start()
+
+    # 本物のafterが動かないように置き換える
+    original_after = gui.root.after
+    gui.root.after = lambda interval, callback: None
+
+    try:
+        # 1ステップ分の再生処理を実行する
+        gui.run_playback_step()
+
+        # 進んだ現在位置のKICKボタンがへこんでいることを確認する
+        assert gui.kick_buttons[1]["relief"] == "sunken"
+
+    finally:
+        # テスト後に元のafterへ戻す
+        gui.root.after = original_after

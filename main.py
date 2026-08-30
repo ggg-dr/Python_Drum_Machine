@@ -376,6 +376,7 @@ class DrumMachineGUI:
     def run_playback_step(self):
         """
         再生中の1ステップ分の処理を行い、
+        現在位置の表示を更新して、
         次のステップ処理を予約する。
         """
 
@@ -386,6 +387,9 @@ class DrumMachineGUI:
         # ドラムマシンの1ステップ分の再生処理を実行する
         self.drum_machine.update_playback()
 
+        # 現在の再生位置の表示を更新する
+        self.update_current_step_display()
+
         # BPMから1ステップ分の待ち時間を取得する
         interval = int(self.drum_machine.get_step_interval())
 
@@ -394,3 +398,29 @@ class DrumMachineGUI:
             interval,
             self.run_playback_step
         )
+
+    def update_current_step_display(self):
+        """
+        現在の再生位置の表示を更新する。
+        """
+
+        # すべてのKICKボタンを通常表示に戻す
+        for button in self.kick_buttons:
+            button["relief"] = "raised"
+
+        # すべてのSNAREボタンを通常表示に戻す
+        for button in self.snare_buttons:
+            button["relief"] = "raised"
+
+        # すべてのHI-HATボタンを通常表示に戻す
+        for button in self.hihat_buttons:
+            button["relief"] = "raised"
+
+        # 現在の再生位置を取得する
+        current_step = self.drum_machine.current_step
+
+        # 現在位置の3つの楽器ボタンをへこんだ表示にする
+        self.kick_buttons[current_step]["relief"] = "sunken"
+        self.snare_buttons[current_step]["relief"] = "sunken"
+        self.hihat_buttons[current_step]["relief"] = "sunken"
+
