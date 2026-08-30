@@ -1,5 +1,5 @@
 import tkinter as tk
-
+import pygame
 class DrumMachine:
     """
     ドラムマシンのデータや処理を管理するクラス。
@@ -180,6 +180,26 @@ class DrumMachineGUI:
 
         # GUIから操作するドラムマシン本体を作成する
         self.drum_machine = DrumMachine()
+
+        # 音声再生機能を初期化する
+        pygame.mixer.init()
+
+        # 各楽器の音声ファイルを管理する
+        self.sound_files = {
+            "kick": "sounds/kick.wav",
+            "snare": "sounds/snare.wav",
+            "hihat": "sounds/hihat.wav"
+        }
+
+        # pygameの音声機能を初期化する
+        pygame.mixer.init()
+
+        # 各楽器の音声ファイルを読み込む
+        self.sounds = {
+            "kick": pygame.mixer.Sound(self.sound_files["kick"]),
+            "snare": pygame.mixer.Sound(self.sound_files["snare"]),
+            "hihat": pygame.mixer.Sound(self.sound_files["hihat"])
+        }
 
         # 再生ボタンを作成する
         self.play_button = tk.Button(
@@ -384,8 +404,12 @@ class DrumMachineGUI:
         if not self.drum_machine.is_playing:
             return
 
-        # ドラムマシンの1ステップ分の再生処理を実行する
-        self.drum_machine.update_playback()
+        # 現在のステップでONになっている楽器を取得する
+        active_instruments = self.drum_machine.update_playback()
+
+        # ONになっている楽器を1つずつ再生する
+        for instrument in active_instruments:
+            self.play_instrument(instrument)
 
         # 現在の再生位置の表示を更新する
         self.update_current_step_display()
@@ -398,6 +422,9 @@ class DrumMachineGUI:
             interval,
             self.run_playback_step
         )
+
+        # ONになっている楽器の一覧を返す
+        return active_instruments
 
     def update_current_step_display(self):
         """
@@ -424,3 +451,23 @@ class DrumMachineGUI:
         self.snare_buttons[current_step]["relief"] = "sunken"
         self.hihat_buttons[current_step]["relief"] = "sunken"
 
+    def play_instrument(self, instrument):
+        """
+        指定された楽器の音声を再生する。
+        """
+
+        # 指定された楽器のSoundオブジェクトを取得する
+        sound = self.sounds[instrument]
+
+        # 音声を再生する
+        sound.play()
+
+if __name__ == "__main__":
+    # Tkinterのメインウィンドウを作成する
+    root = tk.Tk()
+
+    # ドラムマシンGUIを作成する
+    gui = DrumMachineGUI(root)
+
+    # GUIの処理を開始する
+    root.mainloop()

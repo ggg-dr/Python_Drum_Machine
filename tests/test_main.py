@@ -4,6 +4,8 @@
 from main import DrumMachine, DrumMachineGUI
 import pytest
 import tkinter as tk
+import winsound
+import main
 
 @pytest.fixture(scope="module")
 def tk_root():
@@ -1205,3 +1207,125 @@ def test_run_playback_step_updates_current_step_display(tk_root):
     finally:
         # テスト後に元のafterへ戻す
         gui.root.after = original_after
+
+def test_run_playback_step_returns_active_instruments(tk_root):
+    """
+    run_playback_stepが、
+    現在のステップでONの楽器を返すことを確認する。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # KICKの0番目のステップをONにする
+    gui.drum_machine.patterns["kick"][0] = True
+
+    # テスト中は実際の音を鳴らさない
+    gui.play_instrument = lambda instrument: None
+
+    # 実際には待たないようにする
+    gui.root.after = lambda interval, callback: None
+
+    # 再生状態にする
+    gui.drum_machine.start()
+
+    active_instruments = gui.run_playback_step()
+
+    assert active_instruments == ["kick"]
+
+def test_drum_machine_gui_has_play_instrument(tk_root):
+    """
+    GUIに指定した楽器を再生する処理が
+    あることを確認するテスト。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # 楽器を再生する処理があることを確認する
+    assert callable(gui.play_instrument)
+
+def test_run_playback_step_plays_active_instruments(tk_root):
+    """
+    再生中の1ステップ処理で、
+    ONになっている楽器が再生されることを確認するテスト。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # ステップ0のKICKとSNAREをONにする
+    gui.drum_machine.patterns["kick"][0] = True
+    gui.drum_machine.patterns["snare"][0] = True
+
+    # 再生状態にする
+    gui.drum_machine.start()
+
+    # 再生された楽器を記録するリスト
+    played = []
+
+    # 本物のplay_instrumentの代わりに使うテスト用関数
+    def fake_play_instrument(instrument):
+        played.append(instrument)
+
+    # 本物のafterが動かないように置き換える
+    original_after = gui.root.after
+    original_play_instrument = gui.play_instrument
+
+    gui.root.after = lambda interval, callback: None
+    gui.play_instrument = fake_play_instrument
+
+    try:
+        # 1ステップ分の再生処理を実行する
+        gui.run_playback_step()
+
+        # KICKとSNAREが再生されたことを確認する
+        assert played == ["kick", "snare"]
+
+    finally:
+        # テスト後に元へ戻す
+        gui.root.after = original_after
+        gui.play_instrument = original_play_instrument
+
+def test_drum_machine_gui_has_sound_files(tk_root):
+    """
+    GUIが各楽器の音声ファイル情報を
+    持っていることを確認するテスト。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # KICK・SNARE・HI-HATの音声ファイル情報があることを確認する
+    assert "kick" in gui.sound_files
+    assert "snare" in gui.sound_files
+    assert "hihat" in gui.sound_files
+
+
+def test_drum_machine_gui_has_loaded_sounds(tk_root):
+    """
+    GUIが各楽器の音声を
+    読み込んでいることを確認するテスト。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    assert "kick" in gui.sounds
+    assert "snare" in gui.sounds
+    assert "hihat" in gui.sounds
+
+def test_play_instrument_uses_pygame_sound(tk_root):
+    """
+    play_instrumentで、
+    pygameのSoundオブジェクトが再生されることを確認する。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    played = []
+
+    class FakeSound:
+        def play(self):
+            played.append(True)
+
+    gui.sounds["kick"] = FakeSound()
+
+    gui.play_instrument("kick")
+
+    assert played == [True]
