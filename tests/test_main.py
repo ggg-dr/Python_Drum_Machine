@@ -889,3 +889,220 @@ def test_update_bpm_with_text_does_not_change_bpm(tk_root):
 
     # BPMが初期値120のままであることを確認する
     assert gui.drum_machine.bpm == 120
+
+def test_drum_machine_gui_has_start_playback(tk_root):
+    """
+    GUIに再生ループを開始する処理が
+    あることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # 再生ループを開始するメソッドがあることを確認する
+    assert callable(gui.start_playback)
+
+def test_play_button_calls_start_playback(tk_root):
+    """
+    再生ボタンを押すと、
+    GUIの再生開始処理が実行されることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # 再生ボタンを押す
+    gui.play_button.invoke()
+
+    # ドラムマシンが再生状態になっていることを確認する
+    assert gui.drum_machine.is_playing is True
+
+def test_start_playback_schedules_next_step(tk_root):
+    """
+    再生を開始すると、
+    次のステップ処理が予約されることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # afterが呼ばれたか確認するための記録用リスト
+    called = []
+
+    # 本物のafterの代わりに使うテスト用関数
+    def fake_after(interval, callback):
+        called.append((interval, callback))
+
+    # root.afterをテスト用関数に置き換える
+    original_after = gui.root.after
+    gui.root.after = fake_after
+
+    try:
+        # 再生を開始する
+        gui.start_playback()
+
+        # afterが1回呼ばれたことを確認する
+        assert len(called) == 1
+
+    finally:
+        # テスト後に元のafterへ戻す
+        gui.root.after = original_after
+
+def test_run_playback_step_advances_current_step(tk_root):
+    """
+    再生中の1ステップ処理を実行すると、
+    再生位置が1つ進むことを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # ドラムマシンを再生状態にする
+    gui.drum_machine.start()
+
+    # 1ステップ分の再生処理を実行する
+    gui.run_playback_step()
+
+    # 再生位置が1に進んでいることを確認する
+    assert gui.drum_machine.current_step == 1
+
+def test_run_playback_step_schedules_next_step(tk_root):
+    """
+    1ステップ分の再生処理を実行すると、
+    次のステップ処理が予約されることを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # ドラムマシンを再生状態にする
+    gui.drum_machine.start()
+
+    # afterが呼ばれたか確認するための記録用リスト
+    called = []
+
+    # 本物のafterの代わりに使うテスト用関数
+    def fake_after(interval, callback):
+        called.append((interval, callback))
+
+    # root.afterをテスト用関数に置き換える
+    original_after = gui.root.after
+    gui.root.after = fake_after
+
+    try:
+        # 1ステップ分の再生処理を実行する
+        gui.run_playback_step()
+
+        # 次のステップ処理が1回予約されたことを確認する
+        assert len(called) == 1
+
+    finally:
+        # テスト後に元のafterへ戻す
+        gui.root.after = original_after
+
+def test_run_playback_step_does_not_schedule_when_stopped(tk_root):
+    """
+    停止中に再生処理を実行しても、
+    次のステップ処理が予約されないことを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # 停止状態にしておく
+    gui.drum_machine.stop()
+
+    # afterが呼ばれたか確認するための記録用リスト
+    called = []
+
+    # 本物のafterの代わりに使うテスト用関数
+    def fake_after(interval, callback):
+        called.append((interval, callback))
+
+    # root.afterをテスト用関数に置き換える
+    original_after = gui.root.after
+    gui.root.after = fake_after
+
+    try:
+        # 停止中に1ステップ分の再生処理を実行する
+        gui.run_playback_step()
+
+        # 次の処理が予約されていないことを確認する
+        assert len(called) == 0
+
+    finally:
+        # テスト後に元のafterへ戻す
+        gui.root.after = original_after
+
+
+def test_run_playback_step_does_not_advance_when_stopped(tk_root):
+    """
+    停止中に再生処理が呼ばれても、
+    再生位置が進まないことを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # 停止状態にしておく
+    gui.drum_machine.stop()
+
+    # 停止中に再生処理を実行する
+    gui.run_playback_step()
+
+    # 再生位置が0のままであることを確認する
+    assert gui.drum_machine.current_step == 0
+
+def test_start_playback_advances_first_step_immediately(tk_root):
+    """
+    再生を開始すると、
+    最初のステップがすぐに1つ進むことを確認するテスト。
+    """
+
+    # 共通のTkinter rootを使ってGUIを作成する
+    gui = DrumMachineGUI(tk_root)
+
+    # 本物のafterが動かないようにテスト用関数へ置き換える
+    original_after = gui.root.after
+    gui.root.after = lambda interval, callback: None
+
+    try:
+        # 再生を開始する
+        gui.start_playback()
+
+        # 再生位置が1に進んでいることを確認する
+        assert gui.drum_machine.current_step == 1
+
+    finally:
+        # テスト後に元のafterへ戻す
+        gui.root.after = original_after
+
+def test_start_playback_does_not_start_twice(tk_root):
+    """
+    すでに再生中の場合は、
+    再生処理を重複して開始しないことを確認するテスト。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    called = []
+
+    # 本物のafterの代わりに使うテスト用関数
+    def fake_after(interval, callback):
+        called.append((interval, callback))
+
+    original_after = gui.root.after
+    gui.root.after = fake_after
+
+    try:
+        # 1回目の再生開始
+        gui.start_playback()
+
+        # 2回目の再生開始
+        gui.start_playback()
+
+        # afterの予約は1回だけであることを確認する
+        assert len(called) == 1
+
+    finally:
+        gui.root.after = original_after

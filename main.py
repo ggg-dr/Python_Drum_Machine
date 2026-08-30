@@ -185,7 +185,7 @@ class DrumMachineGUI:
         self.play_button = tk.Button(
             self.root,
             text="再生",
-            command=self.drum_machine.start
+            command=self.start_playback
         )
 
         # 再生ボタンをウィンドウ上に配置する
@@ -355,3 +355,42 @@ class DrumMachineGUI:
         except ValueError:
             # 数字以外や0以下の値が入力された場合は何もしない
             pass
+
+    def start_playback(self):
+        """
+        ドラムマシンの再生を開始し、
+        最初のステップをすぐに実行する。
+        """
+
+        # すでに再生中の場合は、
+        # 再生処理を重複して開始しない
+        if self.drum_machine.is_playing:
+            return
+
+        # ドラムマシンを再生状態にする
+        self.drum_machine.start()
+
+        # 最初の1ステップをすぐに実行する
+        self.run_playback_step()
+
+    def run_playback_step(self):
+        """
+        再生中の1ステップ分の処理を行い、
+        次のステップ処理を予約する。
+        """
+
+        # 停止中の場合は何もしない
+        if not self.drum_machine.is_playing:
+            return
+
+        # ドラムマシンの1ステップ分の再生処理を実行する
+        self.drum_machine.update_playback()
+
+        # BPMから1ステップ分の待ち時間を取得する
+        interval = int(self.drum_machine.get_step_interval())
+
+        # 一定時間後に次のステップ処理を実行する
+        self.root.after(
+            interval,
+            self.run_playback_step
+        )
