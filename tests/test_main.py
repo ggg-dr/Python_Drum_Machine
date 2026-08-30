@@ -1377,3 +1377,54 @@ def test_kick_step_button_color_returns_when_off(tk_root):
 
     # 背景色が元に戻ることを確認する
     assert gui.kick_buttons[0]["bg"] == original_color
+
+def test_drum_machine_gui_has_bpm_error_label(tk_root):
+    """
+    BPM入力エラーを表示するラベルがあることを確認する。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    assert gui.bpm_error_label["text"] == ""
+
+def test_update_bpm_shows_error_message_for_invalid_value(tk_root):
+    """
+    不正なBPMを入力したとき、
+    エラーメッセージが表示されることを確認する。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # 入力欄を空にする
+    gui.bpm_entry.delete(0, tk.END)
+
+    # 不正な文字を入力する
+    gui.bpm_entry.insert(0, "abc")
+
+    # BPM更新処理を実行する
+    gui.update_bpm()
+
+    assert gui.bpm_error_label["text"] == "BPMは1以上の数字を入力してください"
+
+def test_update_bpm_clears_error_message_for_valid_value(tk_root):
+    """
+    正しいBPMを入力したとき、
+    エラーメッセージが消えることを確認する。
+    """
+
+    gui = DrumMachineGUI(tk_root)
+
+    # 先にエラーメッセージを表示しておく
+    gui.bpm_error_label["text"] = "BPMは1以上の数字を入力してください"
+
+    # 入力欄を空にする
+    gui.bpm_entry.delete(0, tk.END)
+
+    # 正しいBPMを入力する
+    gui.bpm_entry.insert(0, "140")
+
+    # BPM更新処理を実行する
+    gui.update_bpm()
+
+    assert gui.bpm_error_label["text"] == ""
+

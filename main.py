@@ -181,9 +181,6 @@ class DrumMachineGUI:
         # GUIから操作するドラムマシン本体を作成する
         self.drum_machine = DrumMachine()
 
-        # 音声再生機能を初期化する
-        pygame.mixer.init()
-
         # 各楽器の音声ファイルを管理する
         self.sound_files = {
             "kick": "sounds/kick.wav",
@@ -239,8 +236,19 @@ class DrumMachineGUI:
             command=self.update_bpm
         )
 
+
         # BPM入力欄をウィンドウ上に配置する
         self.bpm_entry.pack()
+
+        # BPM更新ボタンをウィンドウ上に配置する
+        self.bpm_update_button.pack()
+
+        # BPM入力エラーを表示するラベルを作成する
+        self.bpm_error_label = tk.Label(
+            self.root,
+            text=""
+        )
+        self.bpm_error_label.pack()
 
         # ステップボタンをまとめて配置するためのフレームを作成する
         self.pattern_frame = tk.Frame(self.root)
@@ -376,24 +384,20 @@ class DrumMachineGUI:
             self.hihat_buttons[step]["bg"] = "SystemButtonFace"
 
     def update_bpm(self):
-        """
-        BPM入力欄の値を取得して、
-        ドラムマシンのBPMを変更する。
-        """
-
         try:
-            # BPM入力欄に入力されている文字を取得する
             bpm_text = self.bpm_entry.get()
-
-            # 入力された文字を整数に変換する
             bpm = int(bpm_text)
 
-            # ドラムマシンのBPMを変更する
             self.drum_machine.set_bpm(bpm)
 
+            # 正しいBPMが設定できたら
+            # エラーメッセージを消す
+            self.bpm_error_label["text"] = ""
+
         except ValueError:
-            # 数字以外や0以下の値が入力された場合は何もしない
-            pass
+            # 不正なBPMが入力された場合は
+            # エラーメッセージを表示する
+            self.bpm_error_label["text"] = "BPMは1以上の数字を入力してください"
 
     def start_playback(self):
         """
